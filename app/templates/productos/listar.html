@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    #tablaProductos tbody td {
+        padding-top: 0.4rem;
+        padding-bottom: 0.4rem;
+    }
+    #tablaProductos thead th {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    #tablaProductos thead th {
+        background-color: #1966A6;
+        color: white;
+    }
+</style>
+<!-- Page Heading -->
+<h1 class="h3 mb-4 text-gray-800">Gestión de Productos</h1>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
+        <h6 class="m-0 font-weight-bold text-primary">Lista de Productos</h6>
+        <button class="btn btn-primary btn-sm" id="btnNuevo">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table id="tablaProductos" class="table table-bordered table-striped table-hover" width="100%"
+                   cellspacing="0">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Serial</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalProducto" tabindex="-1">
+    <div class="modal-dialog">
+        <form id="formProducto">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Producto</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="producto_id" name="producto_id">
+                    <div class="form-group">
+                        <label>Nombre <span class="text-danger">*</span></label>
+                        <input type="text" name="nombre" id="nombre" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Marca</label>
+                        <input type="text" name="marca" id="marca" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Modelo</label>
+                        <input type="text" name="modelo" id="modelo" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Serial</label>
+                        <input type="text" name="serial" id="serial" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success">Guardar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toasts container -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 2000;">
+    <div id="toastContainer"></div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<!-- DataTables -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
+
+<script>
+
+    function mostrarToast(tipo, mensaje) {
+        let colorClass = tipo === 'success' ? 'bg-success text-white' :
+                         tipo === 'warning' ? 'bg-warning text-dark' :
+                         'bg-danger text-white';
+
+        let toastHTML = `
+        <div class="toast ${colorClass}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+            <div class="toast-header ${colorClass}">
+                <strong class="mr-auto">${tipo.toUpperCase()}</strong>
+                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="toast-body">${mensaje}</div>
+        </div>`;
+
+        $('#toastContainer').append(toastHTML);
+        $('#toastContainer .toast').last().toast('show').on('hidden.bs.toast', function() {
+            $(this).remove();
+        });
+    }
+
+    $(document).ready(function() {
+        let tabla = $('#tablaProductos').DataTable({
+            ajax: '/productos/data',
+            columns: [
+                { data: 'id' },
+                { data: 'nombre' },
+                { data: 'marca' },
+                { data: 'modelo' },
+                { data: 'serial' },
+                {
+                    data: null,
+                    render: function (data) {
+                        return `
+                            <button class="btn btn-warning btn-sm btnEditar" data-id="${data.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${data.id}">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        `;
+                    }
+                }
+            ]
+        });
+
+        // Abrir modal nuevo
+        $('#btnNuevo').click(function() {
+            $('#formProducto')[0].reset();
+            $('#producto_id').val('');
+            $('#modalProducto').modal('show');
+        });
+
+        // Guardar producto con validación
+        $('#formProducto').submit(function(e) {
+            e.preventDefault();
+
+            let nombre = $('#nombre').val().trim();
+            if (!nombre) {
+                mostrarToast('warning', 'El campo "Nombre" es obligatorio.');
+                return;
+            }
+
+            let id = $('#producto_id').val();
+            let url = id ? `/productos/editar/${id}` : '/productos/crear';
+            $.post(url, $(this).serialize(), function(resp) {
+                if (resp.success) {
+                    $('#modalProducto').modal('hide');
+                    tabla.ajax.reload();
+                    mostrarToast('success', resp.message || 'Operación exitosa');
+                } else {
+                    mostrarToast('danger', resp.message || 'Error al guardar el producto');
+                }
+            });
+        });
+
+        // Editar
+        $('#tablaProductos').on('click', '.btnEditar', function() {
+            let id = $(this).data('id');
+            $.getJSON('/productos/data', function(data) {
+                let prod = data.data.find(p => p.id == id);
+                if (prod) {
+                    $('#producto_id').val(prod.id);
+                    $('#nombre').val(prod.nombre);
+                    $('#marca').val(prod.marca);
+                    $('#modelo').val(prod.modelo);
+                    $('#serial').val(prod.serial);
+                    $('#modalProducto').modal('show');
+                }
+            });
+        });
+
+        // Eliminar
+        let idAEliminar = null;
+
+        $('#tablaProductos').on('click', '.btnEliminar', function() {
+            idAEliminar = $(this).data('id');
+            $('#confirmMessage').text('¿Está seguro de que desea eliminar este producto?');
+            $('#confirmModal').modal('show');
+        });
+
+        $('#btnConfirmarAccion').click(function() {
+            if (idAEliminar) {
+                $.post(`/productos/eliminar/${idAEliminar}`, function(resp) {
+                    if (resp.success) {
+                        $('#confirmModal').modal('hide');
+                        tabla.ajax.reload();
+                        mostrarToast('success', resp.message || 'Producto eliminado');
+                    } else {
+                        mostrarToast('danger', resp.message || 'Error al eliminar');
+                    }
+                });
+            }
+        });
+        });
+</script>
+{% endblock %}

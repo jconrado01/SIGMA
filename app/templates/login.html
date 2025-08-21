@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>(&Sigma;) SIGMA</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(to right, #dedfe0, #dedfe0);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .app-title {
+      position: absolute;
+      top: 20px;
+      text-align: center;
+      /*color: #14558a;*/
+	  color: black;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .login-card {
+      display: flex;
+      background: white;
+      border-radius: 5px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 700px;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .login-image {
+      width: 50%;
+      background: url('https://content.app-sources.com/s/86055154229465565/thumbnails/640x480/Logos/LogoVertical-7768379.png?format=webp') no-repeat center center;
+      background-size: 70%;
+    }
+	
+	.login-logo {
+	  max-width: 120px;
+	  height: auto;
+	}
+
+    .login-form {
+      width: 50%;
+      padding: 2rem;
+    }
+
+    .form-control {
+      text-align: center;
+    }
+
+    .login-icon {
+      font-size: 3rem;
+      color: #1966a6;
+    }
+
+    .btn-primary {
+      background-color: #1966a6;
+      border-color: #1966a6;
+    }
+
+    .btn-primary:hover {
+      background-color: #14558a;
+      border-color: #14558a;
+    }
+
+    .footer-text {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      color: black;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- <div class="app-title">(&Sigma;) SIGMA</div> -->
+
+  <div class="login-card">
+    <div class="login-image"></div>
+    <div class="login-form text-center">
+      <div class="mb-4">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo SIGMA" class="login-logo mb-2">
+		
+        <!-- <h4>Iniciar Sesión</h4> -->
+      </div>
+<!--      <form method="POST" action="{{ url_for('auth.login') }}">-->
+        <form id="loginForm">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Usuario" required>
+          <label for="usuario"><i class="bi bi-person-fill me-2"></i>Usuario</label>
+        </div>
+        <div class="form-floating mb-3">
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+          <label for="password"><i class="bi bi-lock-fill me-2"></i>Password</label>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+      </form>
+      <div id="loginError" class="text-danger mt-2"></div>
+    </div>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="position-fixed top-0 start-50 translate-middle-x mt-3" style="z-index: 1055;">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show shadow" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('.alert').forEach(alert => {
+        const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+        bsAlert.close();
+      });
+    }, 2000);
+  </script>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        const response = await fetch('/login', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            window.location.href = result.redirect; // Redirecciona si login exitoso
+        } else {
+            document.getElementById('loginError').innerText = result.message; // Muestra error
+        }
+    });
+    const usuarioInput = document.querySelector('input[name="usuario"]');
+    const passwordInput = document.querySelector('input[name="password"]');
+    const errorDiv = document.getElementById('loginError');
+
+    function limpiarError() {
+        errorDiv.innerText = '';
+    }
+
+    usuarioInput.addEventListener('input', limpiarError);
+    passwordInput.addEventListener('input', limpiarError);
+</script>
+  </script>
+
+</body>
+</html>

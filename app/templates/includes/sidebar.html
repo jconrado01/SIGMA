@@ -1,0 +1,110 @@
+<!-- includes/sidebar.html -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('main.index') }}">
+        <img src="{{ url_for('static', filename='img/logoB.png') }}" alt="Logo SIGMA" class="login-logo">
+    </a>
+
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="{{ url_for('main.index') }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">Menú</div>
+
+    <!-- Collapse menus -->
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseActivos" aria-expanded="true" aria-controls="collapseActivos">
+            <i class="fas fa-fw fa-store"></i>
+            <span>Activos</span>
+        </a>
+        <div id="collapseActivos" class="collapse" aria-labelledby="headingActivos" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Gestión de Activos:</h6>
+                <a class="collapse-item" href="#">Activos</a>
+                <a class="collapse-item" href="#">Mantenimiento</a>
+                <a class="collapse-item" href="#">Bajas</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-store"></i>
+            <span>Almacén</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Gestión del Almacén:</h6>
+                <a class="collapse-item" href="{{ url_for('productos.productos') }}">Productos</a>
+                <a class="collapse-item" href="#">Entradas</a>
+                <a class="collapse-item" href="#">Salidas</a>
+                <a class="collapse-item" href="#">Inventario</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCuentas" aria-expanded="true" aria-controls="collapseCuentas">
+            <i class="fas fa-fw fa-store"></i>
+            <span>Cuentas</span>
+        </a>
+        <div id="collapseCuentas" class="collapse" aria-labelledby="headingCuentas" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Gestión de Cuentas:</h6>
+                <a class="collapse-item" href="#">Cuentas</a>
+                <a class="collapse-item" href="#">Naturales</a>
+                <a class="collapse-item" href="#">Jurídicas</a>
+                <a class="collapse-item" href="#">Enlace</a>
+            </div>
+        </div>
+    </li>
+
+    <hr class="sidebar-divider">
+    <div class="sidebar-heading">ADMIN</div>
+
+    <li class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true" aria-controls="collapsePages">
+            <i class="fas fa-fw fa-folder"></i>
+            <span>Pages</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Login Screens:</h6>
+                <a class="collapse-item" href="{{ url_for('auth.login') }}">Login</a>
+                <a class="collapse-item" href="#">Register</a>
+                <a class="collapse-item" href="#">Forgot Password</a>
+                <div class="collapse-divider"></div>
+                <h6 class="collapse-header">Other Pages:</h6>
+                <a class="collapse-item" href="#">404 Page</a>
+                <a class="collapse-item" href="#">Blank Page</a>
+            </div>
+        </div>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-chart-area"></i>
+            <span>Charts</span>
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a class="nav-link" href="#">
+            <i class="fas fa-fw fa-table"></i>
+            <span>Tables</span>
+        </a>
+    </li>
+
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>
