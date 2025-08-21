@@ -1,0 +1,25 @@
+📌 CHULETARIO GIT - PROYECTO SIGMA
+
+# 🔹 Descargar el proyecto en otro computador (solo la primera vez)
+git clone https://github.com/TU-USUARIO/SIGMA.git
+
+# 🔹 Antes de empezar a trabajar (traer lo último de GitHub)
+git pull origin main
+
+# 🔹 Después de hacer cambios (guardar y subir)
+git add .
+git commit -m "Descripción breve de los cambios"
+git push origin main
+
+# 🔹 Ver el estado actual de los archivos
+git status
+
+# 🔹 Ver historial de commits
+git log --oneline
+
+--------------------------------------------
+⚠️ Tips importantes:
+- Siempre haz "git pull origin main" ANTES de empezar a trabajar.
+- Siempre haz "git push origin main" DESPUÉS de terminar cambios.
+- Usa mensajes de commit claros y cortos.
+--------------------------------------------
