@@ -1,0 +1,92 @@
+25/08/2025
+-- ============================================
+-- Tabla: entrada_almacen (Cabecera de entrada)
+-- ============================================
+CREATE TABLE entrada_almacen (
+    id_entrada SERIAL PRIMARY KEY,
+    contrato_suministro VARCHAR(100) NOT NULL,
+    id_contratista VARCHAR(20) NOT NULL,
+    nombre_contratista VARCHAR(150) NOT NULL,
+    documento_representante VARCHAR(20),
+    nombre_representante VARCHAR(150),
+    objeto_contrato TEXT,
+    valor_contrato NUMERIC(15,2),
+    plazo_contrato VARCHAR(100),
+    acta_inicio DATE,
+    supervisor_contrato VARCHAR(150),
+    notas TEXT,
+    fecha_registro TIMESTAMP DEFAULT NOW()
+);
+
+-- ============================================
+-- Tabla: entrada_detalle (Detalle de productos)
+-- ============================================
+CREATE TABLE entrada_detalle (
+    id_detalle SERIAL PRIMARY KEY,
+    id_entrada INT NOT NULL,
+    id_producto INT NOT NULL,
+    cantidad NUMERIC(12,2) NOT NULL,
+    fecha_registro TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_entrada
+        FOREIGN KEY (id_entrada) REFERENCES entrada_almacen(id_entrada)
+        ON DELETE CASCADE,
+    CONSTRAINT fk_producto
+        FOREIGN KEY (id_producto) REFERENCES productos(id)
+        ON DELETE RESTRICT
+);
+
+-- 1) Agregar campo stock a productos
+ALTER TABLE productos
+ADD COLUMN stock NUMERIC(12,2) NOT NULL DEFAULT 0;
+
+-- (Opcional pero recomendado) Evitar stock negativo
+ALTER TABLE productos
+ADD CONSTRAINT chk_productos_stock_no_negativo CHECK (stock >= 0);
+
+
+-- 3) Función de trigger para mantener stock al día
+CREATE OR REPLACE FUNCTION actualizar_stock_entrada_detalle()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF TG_OP = 'INSERT' THEN
+    UPDATE productos
+      SET stock = stock + NEW.cantidad
+      WHERE id = NEW.id_producto;
+
+  ELSIF TG_OP = 'UPDATE' THEN
+    IF NEW.id_producto <> OLD.id_producto THEN
+      -- Restar del producto anterior
+      UPDATE productos
+        SET stock = stock - OLD.cantidad
+        WHERE id = OLD.id_producto;
+      -- Sumar al producto nuevo
+      UPDATE productos
+        SET stock = stock + NEW.cantidad
+        WHERE id = NEW.id_producto;
+    ELSE
+      -- Mismo producto: ajustar por la diferencia
+      UPDATE productos
+        SET stock = stock + (NEW.cantidad - OLD.cantidad)
+        WHERE id = NEW.id_producto;
+    END IF;
+
+  ELSIF TG_OP = 'DELETE' THEN
+    UPDATE productos
+      SET stock = stock - OLD.cantidad
+      WHERE id = OLD.id_producto;
+  END IF;
+
+  -- En triggers AFTER el valor de retorno se ignora; devolvemos algo por compatibilidad
+  RETURN COALESCE(NEW, OLD);
+END;
+$$ LANGUAGE plpgsql;
+
+-- 4) Trigger (cubre INSERT, UPDATE en columnas relevantes y DELETE)
+DROP TRIGGER IF EXISTS trg_actualizar_stock ON entrada_detalle;
+
+CREATE TRIGGER trg_actualizar_stock
+AFTER INSERT OR UPDATE OF id_producto, cantidad OR DELETE ON entrada_detalle
+FOR EACH ROW
+EXECUTE FUNCTION actualizar_stock_entrada_detalle();
+
+

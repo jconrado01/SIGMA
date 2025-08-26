@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid">
+  <h1 class="h3 mb-4 text-gray-800">Entradas de Almacén</h1>
+  <a href="{{ url_for('entradas.nueva') }}" class="btn btn-primary mb-3">Nueva Entrada</a>
+
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Contrato</th>
+        <th>Contratista</th>
+        <th>Supervisor</th>
+        <th>Fecha</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in entradas %}
+      <tr>
+        <td>{{ e.id_entrada }}</td>
+        <td>{{ e.contrato_suministro }}</td>
+        <td>{{ e.nombre_contratista }}</td>
+        <td>{{ e.supervisor_contrato }}</td>
+        <td>{{ e.fecha_registro.strftime('%Y-%m-%d') }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

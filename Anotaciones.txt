@@ -1,0 +1,10 @@
+Algunas cosas que quisiera mejorar con respecto a entradas/nueva.html
+- Los campos de texto quiero que a medida que escriba se pongan en mayúsculas
+- la identificación del contratista y documento del representante se coloque en formato numérico sin decimales
+- El valor de contrato quiero que se muestre en formato moneda
+- El calendario de acta de inicio sea más moderno
+- En producto no sea estilo combobox sino un texto que al escribir me traiga las opciones que coincidan con el texto escrito y para diferenciar los productos con el mismo nombre, me concatene nombre + marca + modelo + serial separados por espacio.
+- Me deje al menos un producto para ingresar, no me permita eliminar si hay un solo producto (Actualmente lo está permitiendo)
+- Añadir validación de campos para que no se guarden datos en blanco.
+
+Esto quiero que lo corrijamos poco a poco, no todo de una sola vez porque puedo perder el control de los cambios
