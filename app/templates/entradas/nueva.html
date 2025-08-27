@@ -1,150 +1,133 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container-fluid">
-  <h1 class="h3 mb-4 text-gray-800">Nueva Entrada de Almacén</h1>
+    <h1 class="h3 mb-4 text-gray-800">Nueva Entrada de Almacén</h1>
 
-  <form method="POST">
-    <div class="row">
-      <div class="col-md-6">
-        <label>Contrato de Suministro</label>
-        <input type="text" name="contrato_suministro" class="form-control" required>
-      </div>
-      <div class="col-md-6">
-        <label>Identificación Contratista</label>
-        <input type="text" id="id_contratista" name="id_contratista" class="form-control" required>
-      </div>
-    </div>
+    <form method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <label>Contrato de Suministro</label>
+                <input type="text" name="contrato_suministro" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label>Identificación Contratista</label>
+                <input type="text" id="id_contratista" name="id_contratista" class="form-control" required>
+            </div>
+        </div>
 
-    <div class="row mt-2">
-      <div class="col-md-6">
-        <label>Nombre Contratista</label>
-        <input type="text" name="nombre_contratista" class="form-control" required>
-      </div>
-      <div class="col-md-6">
-        <label>Documento Representante</label>
-        <input type="text" id="documento_representante" name="documento_representante" class="form-control" required>
-      </div>
-    </div>
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <label>Nombre Contratista</label>
+                <input type="text" name="nombre_contratista" class="form-control" required>
+            </div>
+            <div class="col-md-6">
+                <label>Documento Representante</label>
+                <input type="text" id="documento_representante" name="documento_representante" class="form-control" required>
+            </div>
+        </div>
 
-    <div class="row mt-2">
-      <div class="col-md-6">
-        <label>Nombre Representante</label>
-        <input type="text" name="nombre_representante" class="form-control">
-      </div>
-      <div class="col-md-6">
-        <label>Objeto del Contrato</label>
-        <input type="text" name="objeto_contrato" class="form-control">
-      </div>
-    </div>
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <label>Nombre Representante</label>
+                <input type="text" name="nombre_representante" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label>Objeto del Contrato</label>
+                <input type="text" name="objeto_contrato" class="form-control">
+            </div>
+        </div>
 
-    <div class="row mt-2">
-      <div class="col-md-4">
-        <label>Valor del Contrato</label>
-        <input type="text" id="valor_contrato" name="valor_contrato" class="form-control" required>
-      </div>
-      <div class="col-md-4">
-        <label>Plazo del Contrato</label>
-        <input type="text" name="plazo_contrato" class="form-control">
-      </div>
-      <div class="col-md-4">
-        <label>Acta de Inicio</label>
-        <input type="text" id="acta_inicio" name="acta_inicio" class="form-control" placeholder="Selecciona una fecha">
-      </div>
-    </div>
+        <div class="row mt-2">
+            <div class="col-md-4">
+                <label>Valor del Contrato</label>
+                <input type="text" id="valor_contrato" name="valor_contrato" class="form-control" required>
+            </div>
+            <div class="col-md-4">
+                <label>Plazo del Contrato</label>
+                <input type="text" name="plazo_contrato" class="form-control">
+            </div>
+            <div class="col-md-4">
+                <label>Acta de Inicio</label>
+                <input type="text" id="acta_inicio" name="acta_inicio" class="form-control" placeholder="Selecciona una fecha">
+            </div>
+        </div>
 
-    <div class="row mt-2">
-      <div class="col-md-6">
-        <label>Supervisor del Contrato</label>
-        <input type="text" name="supervisor_contrato" class="form-control">
-      </div>
-      <div class="col-md-6">
-        <label>Notas</label>
-        <textarea name="notas" class="form-control"></textarea>
-      </div>
-    </div>
+        <div class="row mt-2">
+            <div class="col-md-6">
+                <label>Supervisor del Contrato</label>
+                <input type="text" name="supervisor_contrato" class="form-control">
+            </div>
+            <div class="col-md-6">
+                <label>Notas</label>
+                <textarea name="notas" class="form-control"></textarea>
+            </div>
+        </div>
 
-    <hr>
-    <h5>Productos</h5>
-    <table class="table" id="productos-table">
-      <thead>
-        <tr>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <select name="id_producto" class="form-control">
-              {% for p in productos %}
-                <option value="{{ p.id }}">{{ p.nombre }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td><input type="number" step="0.01" name="cantidad" class="form-control"></td>
-          <td><button type="button" class="btn btn-danger btn-sm remove-row">X</button></td>
-        </tr>
-      </tbody>
-    </table>
-    <button type="button" class="btn btn-secondary" id="add-row">Agregar Producto</button>
+        <hr>
+        <h5>Productos</h5>
+        <table class="table" id="productos-table">
+            <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Unidad de Medida</th>
+                <th>Cantidad</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>
+                    <input type="text" class="form-control buscador-producto" placeholder="Buscar producto...">
+                    <ul class="list-group resultados-busqueda"></ul>
+                    <input type="hidden" name="id_producto">
+                </td>
+                <td>
+                    <input type="text" name="unidad_medida" class="form-control" readonly>
+                </td>
+                <td>
+                    <input type="number" step="1" name="cantidad" class="form-control">
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-sm remove-row">X</button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="button" class="btn btn-secondary" id="add-row">Agregar Producto</button>
 
-    <hr>
-    <button type="submit" class="btn btn-success">Guardar Entrada</button>
-  </form>
+        <hr>
+        <button type="submit" class="btn btn-success">Guardar Entrada</button>
+    </form>
 </div>
 
-<script>
-document.getElementById('add-row').addEventListener('click', function() {
-  let table = document.querySelector('#productos-table tbody');
-  let row = table.querySelector('tr').cloneNode(true);
-  row.querySelector('input').value = '';
-  table.appendChild(row);
-});
-
-document.addEventListener('click', function(e) {
-  if (e.target.classList.contains('remove-row')) {
-    e.target.closest('tr').remove();
-  }
-});
-</script>
+<!-- ====================== Scripts ====================== -->
 
 <script>
+  // Formato números simples
   function formatNumberInput(input) {
-    let value = input.value.replace(/\D/g, ""); // quitar todo lo que no sea número
-    if (value) {
-      input.value = new Intl.NumberFormat('es-CO').format(value);
-    } else {
-      input.value = "";
-    }
+    let value = input.value.replace(/\D/g, "");
+    input.value = value ? new Intl.NumberFormat('es-CO').format(value) : "";
   }
 
-  // Formatear en tiempo real
   document.getElementById("id_contratista").addEventListener("input", function() {
     formatNumberInput(this);
   });
-
   document.getElementById("documento_representante").addEventListener("input", function() {
     formatNumberInput(this);
   });
 
-  // Antes de enviar, limpiar formato
   document.querySelector("form").addEventListener("submit", function() {
-    let idContratista = document.getElementById("id_contratista");
-    let docRepresentante = document.getElementById("documento_representante");
-    idContratista.value = idContratista.value.replace(/\D/g, "");
-    docRepresentante.value = docRepresentante.value.replace(/\D/g, "");
+    document.getElementById("id_contratista").value = document.getElementById("id_contratista").value.replace(/\D/g, "");
+    document.getElementById("documento_representante").value = document.getElementById("documento_representante").value.replace(/\D/g, "");
   });
 </script>
 
 <script>
+  // Formato moneda
   function formatCurrencyInput(input) {
-    // quitar caracteres que no sean números
     let value = input.value.replace(/\D/g, "");
     if (value) {
-      // convertir a número entero
       let numberValue = parseInt(value, 10);
-      // mostrar en formato moneda colombiana
       input.value = new Intl.NumberFormat('es-CO', {
         style: 'currency',
         currency: 'COP',
@@ -155,15 +138,13 @@ document.addEventListener('click', function(e) {
     }
   }
 
-  // Formatear mientras se escribe
   document.getElementById("valor_contrato").addEventListener("input", function() {
     formatCurrencyInput(this);
   });
 
-  // Antes de enviar → limpiar el formato para guardar solo el número
   document.querySelector("form").addEventListener("submit", function() {
     let valorContrato = document.getElementById("valor_contrato");
-    valorContrato.value = valorContrato.value.replace(/\D/g, ""); // solo dígitos
+    valorContrato.value = valorContrato.value.replace(/\D/g, "");
   });
 </script>
 
@@ -175,6 +156,78 @@ document.addEventListener('click', function(e) {
       autoclose: true,
       todayHighlight: true
     });
+  });
+</script>
+
+<script>
+  // Buscador AJAX
+  function attachSearchEvents(row) {
+    let input = row.querySelector(".buscador-producto");
+    let resultados = row.querySelector(".resultados-busqueda");
+
+    input.addEventListener("keyup", function() {
+      let query = this.value;
+
+      if (query.length < 2) {
+        resultados.innerHTML = "";
+        return;
+      }
+
+      fetch(`/buscar_productos?q=${query}`)
+        .then(res => res.json())
+        .then(data => {
+          let html = "";
+          data.forEach(p => {
+            html += `<li class="list-group-item list-group-item-action" style="cursor:pointer"
+                        onclick="selectProducto('${p.id}','${p.nombre}','${p.marca}','${p.modelo}','${p.serial}','${p.unidad_medida}', this)">
+                        <strong>${p.nombre}</strong> - ${p.marca} ${p.modelo} [${p.serial}]
+                     </li>`;
+          });
+          resultados.innerHTML = html;
+        });
+    });
+  }
+
+  function selectProducto(id, nombre, marca, modelo, serial, unidad_medida, element) {
+    // Subir hasta el <tr> correcto
+    let row = element.closest("tr") || element.parentElement.closest("tr");
+    let input = row.querySelector(".buscador-producto");
+    let hiddenId = row.querySelector("input[name='id_producto']");
+    let unidadInput = row.querySelector("input[name='unidad_medida']");
+    let resultados = row.querySelector(".resultados-busqueda");
+
+    input.value = `${nombre} - ${marca} ${modelo} [${serial}]`;
+    hiddenId.value = id;
+    unidadInput.value = unidad_medida;
+    resultados.innerHTML = "";
+  }
+
+  // Inicializar primera fila
+  document.addEventListener("DOMContentLoaded", function() {
+    let firstRow = document.querySelector("#productos-table tbody tr");
+    attachSearchEvents(firstRow);
+  });
+
+  // Agregar fila nueva
+  document.getElementById("add-row").addEventListener("click", function() {
+    let table = document.querySelector('#productos-table tbody');
+    let row = table.querySelector('tr').cloneNode(true);
+
+    row.querySelector(".buscador-producto").value = "";
+    row.querySelector("input[name='id_producto']").value = "";
+    row.querySelector("input[name='unidad_medida']").value = "";
+    row.querySelector(".resultados-busqueda").innerHTML = "";
+    row.querySelector("input[name='cantidad']").value = "";
+
+    table.appendChild(row);
+    attachSearchEvents(row);
+  });
+
+  // Eliminar fila
+  document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('remove-row')) {
+      e.target.closest('tr').remove();
+    }
   });
 </script>
 

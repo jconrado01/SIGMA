@@ -35,6 +35,7 @@
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Serial</th>
+                    <th>Unidad de Medida</th>
                     <th>Acciones</th>
                 </tr>
                 </thead>
@@ -71,6 +72,10 @@
                     <div class="form-group">
                         <label>Serial</label>
                         <input type="text" name="serial" id="serial" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Unidad de Medida</label>
+                        <input type="text" name="unidad_medida" id="unidad_medida" class="form-control">
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -128,6 +133,7 @@
                 { data: 'marca' },
                 { data: 'modelo' },
                 { data: 'serial' },
+                { data: 'unidad_medida' },
                 {
                     data: null,
                     render: function (data) {
@@ -185,6 +191,7 @@
                     $('#marca').val(prod.marca);
                     $('#modelo').val(prod.modelo);
                     $('#serial').val(prod.serial);
+                    $('#unidad_medida').val(prod.unidad_medida);
                     $('#modalProducto').modal('show');
                 }
             });

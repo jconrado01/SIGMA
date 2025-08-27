@@ -19,7 +19,8 @@ def productos_data():
             "nombre": p.nombre,
             "marca": p.marca,
             "modelo": p.modelo,
-            "serial": p.serial
+            "serial": p.serial,
+            "unidad_medida": p.unidad_medida
         } for p in productos]
         return jsonify({"data": data})
     except Exception as e:
@@ -31,8 +32,9 @@ def productos_crear():
     marca = request.form.get('marca')
     modelo = request.form.get('modelo')
     serial = request.form.get('serial')
+    unidad_medida = request.form.get('unidad_medida')
 
-    nuevo = Producto(nombre=nombre, marca=marca, modelo=modelo, serial=serial)
+    nuevo = Producto(nombre=nombre, marca=marca, modelo=modelo, serial=serial, unidad_medida=unidad_medida)
     db.session.add(nuevo)
     db.session.commit()
     return jsonify({"success": True, "message": "Producto creado exitosamente"})
@@ -44,6 +46,7 @@ def productos_editar(id):
     producto.marca = request.form.get('marca')
     producto.modelo = request.form.get('modelo')
     producto.serial = request.form.get('serial')
+    producto.unidad_medida = request.form.get('unidad_medida')
     db.session.commit()
     return jsonify({"success": True, "message": "Producto actualizado exitosamente"})
 
@@ -53,3 +56,30 @@ def productos_eliminar(id):
     db.session.delete(producto)
     db.session.commit()
     return jsonify({"success": True, "message": "Producto eliminado exitosamente"})
+
+@productos_bp.route('/buscar_productos', methods=['GET'])
+def buscar_productos():
+    termino = request.args.get('q', '').strip()
+    if not termino:
+        return jsonify([])
+
+    resultados = Producto.query.filter(
+        Producto.nombre.ilike(f"%{termino}%") |
+        Producto.marca.ilike(f"%{termino}%") |
+        Producto.modelo.ilike(f"%{termino}%") |
+        Producto.serial.ilike(f"%{termino}%")
+    ).limit(10).all()
+
+    data = [
+        {
+            "id": p.id,
+            "nombre": p.nombre,
+            "marca": p.marca,
+            "modelo": p.modelo,
+            "serial": p.serial,
+            "unidad_medida": p.unidad_medida
+        }
+        for p in resultados
+    ]
+
+    return jsonify(data)
