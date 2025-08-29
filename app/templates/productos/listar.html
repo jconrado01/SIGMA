@@ -102,123 +102,128 @@
 
 <script>
 
-    function mostrarToast(tipo, mensaje) {
-        let colorClass = tipo === 'success' ? 'bg-success text-white' :
-                         tipo === 'warning' ? 'bg-warning text-dark' :
-                         'bg-danger text-white';
+function mostrarToast(tipo, mensaje) {
+    let colorClass = tipo === 'success' ? 'bg-success text-white' :
+                     tipo === 'warning' ? 'bg-warning text-dark' :
+                     'bg-danger text-white';
 
-        let toastHTML = `
-        <div class="toast ${colorClass}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
-            <div class="toast-header ${colorClass}">
-                <strong class="mr-auto">${tipo.toUpperCase()}</strong>
-                <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="toast-body">${mensaje}</div>
-        </div>`;
+    let toastHTML = `
+    <div class="toast ${colorClass}" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+        <div class="toast-header ${colorClass}">
+            <strong class="mr-auto">${tipo.toUpperCase()}</strong>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">${mensaje}</div>
+    </div>`;
 
-        $('#toastContainer').append(toastHTML);
-        $('#toastContainer .toast').last().toast('show').on('hidden.bs.toast', function() {
-            $(this).remove();
-        });
+    $('#toastContainer').append(toastHTML);
+    $('#toastContainer .toast').last().toast('show').on('hidden.bs.toast', function() {
+        $(this).remove();
+    });
+}
+
+$(document).ready(function() {
+    let tabla = $('#tablaProductos').DataTable({
+        ajax: '/productos/data',
+        columns: [
+            { data: 'id' },
+            { data: 'nombre' },
+            { data: 'marca' },
+            { data: 'modelo' },
+            { data: 'serial' },
+            { data: 'unidad_medida' },
+            {
+                data: null,
+                render: function (data) {
+                    return `
+                        <button class="btn btn-warning btn-sm btnEditar" data-id="${data.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-danger btn-sm btnEliminar" data-id="${data.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    `;
+                }
+            }
+        ]
+    });
+
+    // Abrir modal nuevo
+    $('#btnNuevo').click(function() {
+        $('#formProducto')[0].reset();
+        $('#producto_id').val('');
+        $('#modalProducto').modal('show');
+    });
+
+// Guardar producto con validación
+$("#formProducto").submit(function(e) {
+    e.preventDefault();
+
+    // Pasar a mayúsculas todos los inputs de texto del modal
+    $(this).find("input[type='text']").each(function() {
+        this.value = this.value.toUpperCase();
+    });
+
+    let nombre = $("#nombre").val().trim();
+    if (!nombre) {
+        mostrarToast('warning', 'El campo "Nombre" es obligatorio.');
+        return;
     }
 
-    $(document).ready(function() {
-        let tabla = $('#tablaProductos').DataTable({
-            ajax: '/productos/data',
-            columns: [
-                { data: 'id' },
-                { data: 'nombre' },
-                { data: 'marca' },
-                { data: 'modelo' },
-                { data: 'serial' },
-                { data: 'unidad_medida' },
-                {
-                    data: null,
-                    render: function (data) {
-                        return `
-                            <button class="btn btn-warning btn-sm btnEditar" data-id="${data.id}">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm btnEliminar" data-id="${data.id}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        `;
-                    }
-                }
-            ]
-        });
+    let id = $("#producto_id").val();
+    let url = id ? `/productos/editar/${id}` : '/productos/crear';
 
-        // Abrir modal nuevo
-        $('#btnNuevo').click(function() {
-            $('#formProducto')[0].reset();
-            $('#producto_id').val('');
+    $.post(url, $(this).serialize(), function(resp) {
+        if (resp.success) {
+            $("#modalProducto").modal("hide");
+            mostrarToast('success', resp.message || 'Producto guardado correctamente');
+        } else {
+            mostrarToast('danger', resp.message || 'Error al guardar el producto');
+        }
+    });
+});
+
+// Editar
+$('#tablaProductos').on('click', '.btnEditar', function() {
+    let id = $(this).data('id');
+    $.getJSON('/productos/data', function(data) {
+        let prod = data.data.find(p => p.id == id);
+        if (prod) {
+            $('#producto_id').val(prod.id);
+            $('#nombre').val(prod.nombre);
+            $('#marca').val(prod.marca);
+            $('#modelo').val(prod.modelo);
+            $('#serial').val(prod.serial);
+            $('#unidad_medida').val(prod.unidad_medida);
             $('#modalProducto').modal('show');
-        });
+        }
+    });
+});
 
-        // Guardar producto con validación
-        $('#formProducto').submit(function(e) {
-            e.preventDefault();
+// Eliminar
+let idAEliminar = null;
 
-            let nombre = $('#nombre').val().trim();
-            if (!nombre) {
-                mostrarToast('warning', 'El campo "Nombre" es obligatorio.');
-                return;
-            }
+$('#tablaProductos').on('click', '.btnEliminar', function() {
+    idAEliminar = $(this).data('id');
+    $('#confirmMessage').text('¿Está seguro de que desea eliminar este producto?');
+    $('#confirmModal').modal('show');
+});
 
-            let id = $('#producto_id').val();
-            let url = id ? `/productos/editar/${id}` : '/productos/crear';
-            $.post(url, $(this).serialize(), function(resp) {
-                if (resp.success) {
-                    $('#modalProducto').modal('hide');
-                    tabla.ajax.reload();
-                    mostrarToast('success', resp.message || 'Operación exitosa');
-                } else {
-                    mostrarToast('danger', resp.message || 'Error al guardar el producto');
-                }
-            });
-        });
-
-        // Editar
-        $('#tablaProductos').on('click', '.btnEditar', function() {
-            let id = $(this).data('id');
-            $.getJSON('/productos/data', function(data) {
-                let prod = data.data.find(p => p.id == id);
-                if (prod) {
-                    $('#producto_id').val(prod.id);
-                    $('#nombre').val(prod.nombre);
-                    $('#marca').val(prod.marca);
-                    $('#modelo').val(prod.modelo);
-                    $('#serial').val(prod.serial);
-                    $('#unidad_medida').val(prod.unidad_medida);
-                    $('#modalProducto').modal('show');
-                }
-            });
-        });
-
-        // Eliminar
-        let idAEliminar = null;
-
-        $('#tablaProductos').on('click', '.btnEliminar', function() {
-            idAEliminar = $(this).data('id');
-            $('#confirmMessage').text('¿Está seguro de que desea eliminar este producto?');
-            $('#confirmModal').modal('show');
-        });
-
-        $('#btnConfirmarAccion').click(function() {
-            if (idAEliminar) {
-                $.post(`/productos/eliminar/${idAEliminar}`, function(resp) {
-                    if (resp.success) {
-                        $('#confirmModal').modal('hide');
-                        tabla.ajax.reload();
-                        mostrarToast('success', resp.message || 'Producto eliminado');
-                    } else {
-                        mostrarToast('danger', resp.message || 'Error al eliminar');
-                    }
-                });
+$('#btnConfirmarAccion').click(function() {
+    if (idAEliminar) {
+        $.post(`/productos/eliminar/${idAEliminar}`, function(resp) {
+            if (resp.success) {
+                $('#confirmModal').modal('hide');
+                tabla.ajax.reload();
+                mostrarToast('success', resp.message || 'Producto eliminado');
+            } else {
+                mostrarToast('danger', resp.message || 'Error al eliminar');
             }
         });
-        });
+    }
+});
+});
 </script>
 {% endblock %}
